@@ -1,0 +1,55 @@
+﻿<h4 class="bg-primary text-white text-center p-2">People</h4>
+
+<table class="table table-sm table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Dept</th>
+            <th>Location</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Person p in People)
+        {
+            <tr class="@GetCssClass(p.Location.City)">
+                <td>@p.Id</td>
+                <td>@p.Surname, @p.Firstname</td>
+                <td>@p.Department.Name</td>
+                <td>@p.Location.City, @p.Location.State</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="form-group">
+    <label for="city">City</label>
+    <select name="city" class="form-control" @bind="SelectedCity">
+        <option disabled selected>Select City</option>
+        @foreach (Location location in Locations)
+        {
+            <option value="@location.City" selected="@(location.City == SelectedCity)">
+                @location.City
+            </option>
+        }
+    </select>
+</div>
+
+@code {
+    [Inject] 
+    public IPersonRepository PersonRepository { get; set; }
+
+    [Inject] 
+    public ILocationRepository LocationRepository { get; set; }
+
+    public IEnumerable<Person> People => PersonRepository.GetAll(); 
+
+    public IEnumerable<Location> Locations => LocationRepository.GetLocations(); 
+
+    public string SelectedCity { get; set; }
+
+    public string GetCssClass(string city) 
+    { 
+        return SelectedCity == city ? "bg-info text-white" : ""; 
+    }
+}

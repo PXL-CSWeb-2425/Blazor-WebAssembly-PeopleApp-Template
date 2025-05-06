@@ -1,0 +1,21 @@
+﻿.validation-errors {
+    background-color: red;
+    color: white;
+    padding: 8px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+div.validation-message {
+    color: red;
+    font-weight: 500;
+}
+
+.modified.valid {
+    border: solid 3px green;
+}
+
+.modified.invalid {
+    border: solid 3px red;
+}

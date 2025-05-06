@@ -1,0 +1,70 @@
+﻿@using Microsoft.Extensions.DependencyInjection
+@inherits OwningComponentBase
+@page "/manage/people/edit/{id:long}"
+
+<link href="css/blazorValidation.css" rel="stylesheet"/>
+
+@if(Person is null)
+{
+    <h4 class="bg-primary text-white text-center p-2">Person not found.</h4>
+}
+else
+{
+    <h4 class="bg-primary text-white text-center p-2">Edit person: @Person.Firstname @Person.Surname</h4>
+
+    <EditForm Model="Person" OnValidSubmit="HandleValidSubmit">
+        <div class="form-group">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <label>ID</label>
+            <InputNumber class="form-control" @bind-Value="Person.Id" disabled />
+        </div>
+        <div class="form-group">
+            <label>Firstname</label>
+            <ValidationMessage For="@(() => Person.Firstname)" />
+            <InputText class="form-control" @bind-Value="Person.Firstname" />
+        </div>
+        <div class="form-group">
+            <label>Surname</label>
+            <ValidationMessage For="@(() => Person.Surname)" />
+            <InputText class="form-control" @bind-Value="Person.Surname" />
+        </div>
+        <div class="form-group">
+            <label>Department ID</label>
+            <ValidationMessage For="@(() => Person.DepartmentId)" />
+            <InputNumber class="form-control" @bind-Value="Person.DepartmentId" />
+        </div>
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <NavLink class="btn btn-secondary" href="/manage/people">Back</NavLink>
+        </div>
+    </EditForm>
+}
+@code {
+    [Inject]
+    private NavigationManager NavigationManager { get; set; }
+
+    private IPersonRepository PersonRepository;
+
+    [Parameter]
+    public long Id { get; set; }
+
+    public Person Person { get; set; }
+
+    override protected void OnInitialized()
+    {
+        PersonRepository = ScopedServices.GetRequiredService<IPersonRepository>();
+    }
+
+    protected override void OnParametersSet()
+    {
+        Person = PersonRepository.GetById(Id);
+    }
+
+    private void HandleValidSubmit()
+    {
+        PersonRepository.Update(Person);
+        NavigationManager.NavigateTo("/manage/people");
+    }
+}
